@@ -37,6 +37,7 @@ use pocketmine\entity\{
 	EntityDataHelper
 };
 
+use function count;
 use function in_array;
 
 final class SkillManager{
@@ -73,7 +74,7 @@ final class SkillManager{
 	public static function registerMob(Entity $entity) : void{
 		$class = $entity::class;
 		if(!in_array($class, self::$canTarget, true)){
-			self::$canTarget[] = $class
+			self::$canTarget[] = $class;
 		}
 	}
 
@@ -82,7 +83,7 @@ final class SkillManager{
 		$arr = explode('/', $class);
 		EntityFactory::getInstance()->register($class, function(World $world, CompoundTag $nbt) use($class) : SkillEntity{
 			return new $class(EntityDataHelper::parseLocation($nbt, $world), SkillEntity::parseSkinNBT($nbt), $nbt);
-		}, [$arr[count($arr) - 1, $class]]);
+		}, [$arr[count($arr) - 1], $class]);
 	}
 
 }
