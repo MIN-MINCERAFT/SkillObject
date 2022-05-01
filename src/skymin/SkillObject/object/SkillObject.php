@@ -43,6 +43,8 @@ abstract class SkillObject{
 
 	protected bool $closed = false;
 
+	protected int $closeTimer = 0;
+
 	public function __construct(Location $pos){
 		$this->location = $pos;
 	}
@@ -90,7 +92,15 @@ abstract class SkillObject{
 		SkillObjectTask::addObject($this);
 	}
 
+	public final function setCloseTimer(int $tick){
+		$this->closeTimer = $tick;
+	}
+
 	public function skillTick() : void{
+		$this->closeTimer--;
+		if($this->closeTimer < 1){
+			$this->closed = true;
+		}
 		$owner = $this->owner;
 		if($owner !== null && ($owner->isClosed() || !$owner->isAlive() || !$owner->isOnline())){
 			$this->closed = true;

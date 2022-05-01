@@ -55,10 +55,15 @@ use function in_array;
 abstract class SkillEntity extends Entity{
 
 	protected ?Player $owner = null;
+
 	protected Skin $skin;
+
 	protected SkinData $skinData;
+
 	protected UuidInterface $uuid;
-	
+
+	protected int $closeTimer = 0;
+
 	public static function getNetworkTypeId() : string{ return EntityIds::PLAYER; }
 
 	public static function parseSkinNBT(CompoundTag $nbt) : Skin{
@@ -125,7 +130,15 @@ abstract class SkillEntity extends Entity{
 		return $this->skin;
 	}
 
+	public final function setCloseTimer(int $tick){
+		$this->closeTimer = $tick;
+	}
+
 	public function entityBaseTick(int $tickDiff = 1) : bool{
+		$this->closeTimer--;
+		if($this->closeTimer < 1){
+			$this->close();
+		}
 		$owner = $this->owner;
 		if($owner !== null && ($owner->isClosed() || !$owner->isAlive() || !$owner->isOnline())){
 			$this->close();
