@@ -21,7 +21,7 @@
  *
  */
 
-declare(strict_types = );
+declare(strict_types = 1);
 
 namespace skymin\SkillObject;
 

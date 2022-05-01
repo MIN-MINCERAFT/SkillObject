@@ -117,7 +117,7 @@ abstract class SkillObject{
 		$owner = $this->owner;
 		if($owner !== null && ($owner->isClosed() || !$owner->isAlive() || !$owner->isOnline())){
 			$this->close();
-			return false;
+			return;
 		}
 		if($this instanceof SkillEffect){
 			$this->skillEffect();
