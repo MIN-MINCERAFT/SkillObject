@@ -145,7 +145,7 @@ abstract class SkillEntity extends Entity{
 			return false;
 		}
 		if(!$this instanceof SkillEffect){
-			return parent::entityBaseTick($tickDiff);;
+			return parent::entityBaseTick($tickDiff);
 		}
 		$this->skillEffect();
 		if($this instanceof SkillBase){

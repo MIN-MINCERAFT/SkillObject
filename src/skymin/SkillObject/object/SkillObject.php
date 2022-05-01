@@ -111,12 +111,12 @@ abstract class SkillObject{
 	public function skillTick() : void{
 		$this->closeTimer--;
 		if($this->closeTimer < 1){
-			$this->closed = true;
+			$this->close();
 		}
 		$owner = $this->owner;
 		if($owner !== null && ($owner->isClosed() || !$owner->isAlive() || !$owner->isOnline())){
-			$this->closed = true;
-			return;
+			$this->close();
+			return false;
 		}
 		if($this instanceof SkillEffect){
 			$this->skillEffect();
@@ -126,11 +126,11 @@ abstract class SkillObject{
 			$world = $pos->world;
 			foreach($world->getEntities() as $target){
 				if($pos->distance($target->getPosition()) > static::getDistance()) continue;
-				if($target instanceof ADMob){
+				if(in_array($target::class, SkillManager::$canTarget, true)){
 					$this->skillAttack($target);
 					continue;
 				}
-				if($world->getFolderName() === 'world'){
+				if(in_array($world->getFolderName(), SkillManager::$pvpWorlds, true)){
 					if($target instanceof Player && ($owner === null || $owner->getId() !== $target->getId())){
 						if($target->getGamemode()->getEnglishName() === 'Survival'){
 							$this->skillAttack($target);
