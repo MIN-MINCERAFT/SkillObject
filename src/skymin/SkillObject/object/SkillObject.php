@@ -30,10 +30,13 @@ use skymin\SkillObject\interface\{SkillBase, SkillEffect};
 use skymin\SkillObject\task\SkillObjectTask;
 
 use pocketmine\player\Player;
-
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 use pocketmine\entity\Location;
+
+use function sin;
+use function cos;
+use function deg2rad;
 
 abstract class SkillObject{
 
