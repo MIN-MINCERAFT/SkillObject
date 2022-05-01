@@ -43,7 +43,7 @@ abstract class SkillObject{
 
 	protected bool $closed = false;
 
-	protected int $closeTimer = 0;
+	protected int $closeTimer = 10;
 
 	public function __construct(Location $pos){
 		$this->location = $pos;
@@ -64,7 +64,7 @@ abstract class SkillObject{
 		}
 		$loc = $this->location;
 		$world = $pos instanceof Position ? $pos->world : $loc->world;
-		$this->location = Location::fromObject($pos, $world, $loc, $loc->yaw, $loc->pitch);
+		$this->location = Location::fromObject($pos, $world, $loc->yaw, $loc->pitch);
 	} 
 
 	public final function getLocation() : Location{
@@ -96,6 +96,15 @@ abstract class SkillObject{
 		$this->closeTimer = $tick;
 	}
 
+	public final function getDirectionVector() : Vector3{
+		$loc = $this->location;
+		$y = -sin(deg2rad($loc->pitch));
+		$xz = cos(deg2rad($loc->pitch));
+		$x = -$xz * sin(deg2rad($loc->yaw));
+		$z = $xz * cos(deg2rad($loc->yaw));
+		return (new Vector3($x, $y, $z))->normalize();
+	}
+
 	public function skillTick() : void{
 		$this->closeTimer--;
 		if($this->closeTimer < 1){
@@ -114,11 +123,11 @@ abstract class SkillObject{
 			$world = $pos->world;
 			foreach($world->getEntities() as $target){
 				if($pos->distance($target->getPosition()) > static::getDistance()) continue;
-				if(in_array($target::class, SkillManager::$canTarget, true)){
+				if($target instanceof ADMob){
 					$this->skillAttack($target);
 					continue;
 				}
-				if(in_array($world->getFolderName(), SkillManager::$pvpWorlds, true)){
+				if($world->getFolderName() === 'world'){
 					if($target instanceof Player && ($owner === null || $owner->getId() !== $target->getId())){
 						if($target->getGamemode()->getEnglishName() === 'Survival'){
 							$this->skillAttack($target);
