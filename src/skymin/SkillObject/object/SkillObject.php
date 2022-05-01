@@ -37,6 +37,7 @@ use pocketmine\entity\Location;
 use function sin;
 use function cos;
 use function deg2rad;
+use function in_array;
 
 abstract class SkillObject{
 
