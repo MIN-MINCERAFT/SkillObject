@@ -43,10 +43,10 @@ use function in_array;
 final class SkillManager{
 
 	/** @var string[] */
-	private static array $pvpWorlds = [];
+	public static array $pvpWorlds = [];
 
 	/** @var string[] */
-	private static array $canTarget = [];
+	public static array $canTarget = [];
 
 	private static bool $register = false;
 
