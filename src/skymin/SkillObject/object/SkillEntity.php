@@ -25,6 +25,7 @@ declare(strict_types = 1);
 
 namespace skymin\SkillObject\object;
 
+use pocketmine\player\GameMode;
 use skymin\SkillObject\SkillManager;
 use skymin\SkillObject\interface\{SkillBase, SkillEffect};
 
@@ -98,15 +99,13 @@ abstract class SkillEntity extends Entity{
 	public function saveNBT() : CompoundTag{
 		$skin = $this->skin;
 		$nbt = parent::saveNBT();
-		if($this->skin !== null){
-			$nbt->setTag('Skin', CompoundTag::create()
-				->setString('Name', $skin->getSkinId())
-				->setByteArray('Data', $skin->getSkinData())
-				->setByteArray('CapeData', $skin->getCapeData())
-				->setString('GeometryName', $skin->getGeometryName())
-				->setByteArray('GeometryData', $skin->getGeometryData())
-			);
-		}
+		$nbt->setTag('Skin', CompoundTag::create()
+			->setString('Name', $skin->getSkinId())
+			->setByteArray('Data', $skin->getSkinData())
+			->setByteArray('CapeData', $skin->getCapeData())
+			->setString('GeometryName', $skin->getGeometryName())
+			->setByteArray('GeometryData', $skin->getGeometryData())
+		);
 		return $nbt;
 	}
 
@@ -152,14 +151,14 @@ abstract class SkillEntity extends Entity{
 			$pos = $this->location;
 			$world = $pos->world;
 			foreach($world->getEntities() as $target){
-				if($pos->distance($target->getPosition()) > static::getDistance()) continue;
+				if($pos->distance($target->getPosition()) > $this::getDistance()) continue;
 				if(in_array($target::class, SkillManager::$canTarget, true)){
 					$this->skillAttack($target);
 					continue;
 				}
 				if(in_array($world->getFolderName(), SkillManager::$pvpWorlds, true)){
 					if($target instanceof Player && ($owner === null || $owner->getId() !== $target->getId())){
-						if($target->getGamemode()->getEnglishName() === 'Survival'){
+						if($target->getGamemode() === GameMode::SURVIVAL()){
 							$this->skillAttack($target);
 						}
 					}
@@ -213,5 +212,4 @@ abstract class SkillEntity extends Entity{
 		$pk->mode = $teleport ? MovePlayerPacket::MODE_TELEPORT : MovePlayerPacket::MODE_NORMAL;
 		$pos->world->broadcastPacketToViewers($pos, $pk);
 	}
-
 }
